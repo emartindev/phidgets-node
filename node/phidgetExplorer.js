@@ -30,9 +30,10 @@ const triggerData = {
 };
 
 let sensorData = {
-    hubName: null,
+  hubName: null,
   hubSerialNumber: null,
   howManyPorts: null,
+  connected: false,
 };
 
 const runExplorer = async () => {
@@ -55,7 +56,9 @@ const runExplorer = async () => {
   const hubName = vintHub.getDeviceName(0);
   sensorData.hubName = hubName;
   console.log(`Sensor Name: ${hubName}`);
-  
+
+  sensorData.connected = true;
+  console.log(`Connected: ${sensorData.connected}`);
   
   
   

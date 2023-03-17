@@ -12,22 +12,25 @@
     <h1>Hub Name: <span id="hubName"></span></h1>
     <h1>Hub Serial Number: <span id="hubSerialNumber"></span></h1>
     <h1>How Many Ports: <span id="howManyPorts"></span></h1>
+    <h1>Connected: <span id="connected"></span></h1>
     
     <script>
       let apiData = {
         hubName: "placeholder",
         hubSerialNumber: 000000,
         howManyPorts: 0,
+        connected: false,
       };
 
       setInterval(() => {
-        fetch("http://localhost:8080/sensor-data")
+        fetch("http://localhost:8081/sensor-data")
           .then((response) => response.json())
           .then((data) => {
             // set the data to the apiData object
             apiData.hubName = data.hubName;
             apiData.hubSerialNumber = data.hubSerialNumber;
             apiData.howManyPorts = data.howManyPorts;
+            apiData.connected = data.connected;
 
           });
         //   console.log(apiData);
@@ -41,6 +44,7 @@
             $("#hubName").text(apiData.hubName);
             $("#hubSerialNumber").text(apiData.hubSerialNumber);
             $("#howManyPorts").text(apiData.howManyPorts);
+            $("#connected").text(apiData.connected);
         }, 1000);
     </script>
   </body>
