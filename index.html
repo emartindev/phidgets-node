@@ -1,51 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- import jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>Hub Name: <span id="hubName"></span></h1>
-    <h1>Hub Serial Number: <span id="hubSerialNumber"></span></h1>
-    <h1>How Many Ports: <span id="howManyPorts"></span></h1>
-    <h1>Connected: <span id="connected"></span></h1>
-    
-    <script>
-      let apiData = {
-        hubName: "placeholder",
-        hubSerialNumber: 000000,
-        howManyPorts: 0,
-        connected: false,
-      };
 
-      setInterval(() => {
-        fetch("http://localhost:8081/sensor-data")
-          .then((response) => response.json())
-          .then((data) => {
-            // set the data to the apiData object
-            apiData.hubName = data.hubName;
-            apiData.hubSerialNumber = data.hubSerialNumber;
-            apiData.howManyPorts = data.howManyPorts;
-            apiData.connected = data.connected;
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- import jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <title>Document</title>
+</head>
 
-          });
-        //   console.log(apiData);
-      }, 1000);
+<body>
+  <h2>Hub Name: <span id="hubName"></span></h2>
+  <h2>Hub Serial Number: <span id="hubSerialNumber"></span></h2>
+  <h2>How Many Ports: <span id="howManyPorts"></span></h2>
+  <h2>Connected: <span id="connected"></span></h2>
+  <h2>Distance Threshold: <span id="distanceThreshold"></span></h2>
+  <h2>Sensor Information</h2>
+  <h2>Distance In Gate 1: <span id="distanceIn"></span></h2>
+  <h2>Distance Out Gate 2: <span id="distanceOut"></span></h2>
+  <h2>Distance In Gate 2: <span id="distanceInGate2"></span></h2>
+  <h2>Distance Out Gate 2: <span id="distanceOutGate2"></span></h2>
+  <h2>Hub Port 1: <span id="hubPort1"></span></h2>
+  <h2>Hub Port 2: <span id="hubPort2"></span></h2>
 
-      
+  <h2>Trigger Command: <span id="triggerCommand"></span> </h2>
+  <h2>Trigger Count: <span id="triggerCount"></span> </h2>
+  <h2>Trigger Timestamp: <span id="triggerTimestamp"></span> </h2>
+  <h2>Trigger Addr: <span id="triggerAddr"></span> </h2>
+  <h2>Trigger Port: <span id="triggerPort"></span> </h2>
 
-      // using jquery to display the data on the page
-      // update it if there is new data in the apiData object 
-        setInterval(() => {
-            $("#hubName").text(apiData.hubName);
-            $("#hubSerialNumber").text(apiData.hubSerialNumber);
-            $("#howManyPorts").text(apiData.howManyPorts);
-            $("#connected").text(apiData.connected);
-        }, 1000);
-    </script>
-  </body>
+
+  
+
+  <button id="btn">Click Me</button>
+
+
+
+
+  <script>
+    let apiData = {
+      hubName: null,
+      hubSerialNumber: null,
+      howManyPorts: null,
+      connected: false,
+      distanceThreshold: null,
+      sensorInformation: {
+        distanceIn: null,
+        distanceOut: null,
+        distanceInGate2: null,
+        distanceOutGate2: null,
+        hubPort1: null,
+        hubPort2: null,
+      },
+    };
+
+    let triggerApiData = {
+      type: null, // specifies which command is triggered (null when not triggered)
+      count: 0, // counts the number of triggers sent
+      tcpClient: {
+        // settings for connecting to the TCP client
+        addr: "127.0.0.1",
+        port: 8744,
+      },
+      timestamp: null, // stores the time of request triggering
+    };
+
+    setInterval(() => {
+      fetch("http://localhost:8081/sensor-data")
+        .then((response) => response.json())
+        .then((data) => {
+          // set the data to the apiData object
+          apiData.hubName = data.hubName;
+          apiData.hubSerialNumber = data.hubSerialNumber;
+          apiData.howManyPorts = data.howManyPorts;
+          apiData.connected = data.connected;
+          apiData.distanceThreshold = data.distanceThreshold;
+          apiData.sensorInformation.distanceIn = data.sensorInformation.distanceIn;
+          apiData.sensorInformation.distanceOut = data.sensorInformation.distanceOut;
+          apiData.sensorInformation.distanceInGate2 = data.sensorInformation.distanceInGate2;
+          apiData.sensorInformation.distanceOutGate2 = data.sensorInformation.distanceOutGate2;
+          apiData.sensorInformation.hubPort1 = data.sensorInformation.hubPort1;
+          apiData.sensorInformation.hubPort2 = data.sensorInformation.hubPort2;
+          apiData.sensorInformation.command = data.command;
+        });
+      console.log(triggerApiData);
+    }, 1000);
+
+
+    setInterval(() => {
+      fetch("http://localhost:8081/trigger-data")
+        .then((response) => response.json())
+        .then((data) => {
+          // set the data to the apiData object
+          triggerApiData.type = data.type;
+          triggerApiData.count = data.count;
+          triggerApiData.tcpClient.addr = data.tcpClient.addr;
+          triggerApiData.tcpClient.port = data.tcpClient.port;
+          triggerApiData.timestamp = data.timestamp;
+
+        });
+      // console.log(apiData);
+    }, 1000);
+
+
+
+    // using jquery to display the data on the page
+    // update it if there is new data in the apiData object 
+    setInterval(() => {
+      $("#hubName").text(apiData.hubName);
+      $("#hubSerialNumber").text(apiData.hubSerialNumber);
+      $("#howManyPorts").text(apiData.howManyPorts);
+      $("#connected").text(apiData.connected);
+      $("#distanceThreshold").text(apiData.distanceThreshold);
+      $("#distanceIn").text(apiData.sensorInformation.distanceIn);
+      $("#distanceOut").text(apiData.sensorInformation.distanceOut);
+      $("#distanceInGate2").text(apiData.sensorInformation.distanceInGate2);
+      $("#distanceOutGate2").text(apiData.sensorInformation.distanceOutGate2);
+      $("#hubPort1").text(apiData.sensorInformation.hubPort1);
+      $("#hubPort2").text(apiData.sensorInformation.hubPort2);
+      $("#triggerCommand").text(triggerApiData.type);
+      $("#triggerCount").text(triggerApiData.count);
+      $("#triggerTimestamp").text(triggerApiData.timestamp);
+      $("#triggerAddr").text(triggerApiData.tcpClient.addr);
+      $("#triggerPort").text(triggerApiData.tcpClient.port);
+
+
+    }, 1000);
+
+    $("#btn").click(() => {
+      console.log(apiData);
+      fetch('http://127.0.0.1:8082/trigger-command', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type: "TRIGGER" }),
+      })
+        .then((data) => console.log(data))
+        .then((res) => res.text())
+        .catch((error) => console.error(error));
+    });
+  </script>
+</body>
+
 </html>
